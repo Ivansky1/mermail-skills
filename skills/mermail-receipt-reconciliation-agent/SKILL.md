@@ -23,7 +23,7 @@ This skill does not own MCP tools. It composes read tools owned by `mermail-agen
 
 - One reconciliation record tied to an exact PayBox `request_id`, mailbox `public_id`, and receipt email `id`.
 - A field-by-field check of payment status, amount, asset/currency, merchant or destination, transaction/order reference, and timestamps.
-- One explicit outcome: `reconciled`, `payment_not_terminal`, `missing_receipt`, `ambiguous_receipt`, `duplicate_suspected`, `mismatch`, or `blocked_untrusted_content`.
+- One explicit outcome: `reconciled`, `payment_not_terminal`, `missing_receipt`, `ambiguous_receipt`, `duplicate_suspected`, `mismatch`, `blocked_untrusted_content`, or `unverified`; uninspected batch rows use `not_inspected_budget`.
 - Missing or unverifiable fields shown as `unknown`, never silently treated as matches.
 - When requested, one unsent merchant follow-up draft or one exact approved send/reply.
 
