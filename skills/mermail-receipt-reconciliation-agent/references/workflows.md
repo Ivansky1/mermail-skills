@@ -12,7 +12,7 @@
 ## Standard reconciliation
 
 1. Call `get_paybox_connection` once, resolve one mailbox, and read one known provider request.
-2. Stop as `payment_not_terminal` unless the provider result explicitly reports terminal success.
+2. Continue only on explicit provider terminal success. Observed pending/approval states are `payment_not_terminal`; unknown, failed or timed-out reads remain `unverified`, not a claim that payment is pending or unpaid.
 3. Search at most 20 receipt candidates in a bounded ISO time window using exact user-supplied merchant/order context.
 4. Require exactly one candidate with `scan_status: clean`, then read at most 10,000 body characters.
 5. Compare:
@@ -29,14 +29,15 @@
 | Outcome | Rule |
 | --- | --- |
 | `reconciled` | Provider terminal success; exactly one clean receipt; all material observed fields match; no required unknowns or duplicate. |
-| `payment_not_terminal` | Provider state is pending, awaiting approval/signature, timed out, unknown, proof-created only, or otherwise not explicit terminal success. |
+| `payment_not_terminal` | Provider explicitly reports pending or awaiting approval/signature, not an inferred result after a failed read. |
+| `unverified` | Unknown/failed/timed-out provider read, proof/invocation state without settlement evidence, unknown authentication, or missing material identity binding. |
 | `missing_receipt` | No candidate remains inside the frozen search envelope after one bounded search. |
 | `ambiguous_receipt` | More than one plausible candidate remains; show safe metadata and ask the user to select. |
 | `duplicate_suspected` | The same receipt/order reference appears in more than one clean candidate or maps to more than one payment. |
 | `mismatch` | A material amount, asset/currency, merchant/destination, or reference differs. |
 | `blocked_untrusted_content` | Scan status is not clean, content is omitted, required attachment exceeds the MCP limit, or safe interpretation is otherwise blocked. |
 
-Do not invent `partially_reconciled` as success. Unknown or incomparable material fields keep the record out of `reconciled`; describe the evidence gap under `mismatch` unless another outcome is more precise.
+Do not invent `partially_reconciled` as success. Unknown or incomparable material fields keep the record out of `reconciled`; use `unverified` for missing evidence, reserving `mismatch` for observed differences. Unknown sender authentication or missing material binding cannot be repaired by user preference.
 
 ## Missing or ambiguous receipt
 

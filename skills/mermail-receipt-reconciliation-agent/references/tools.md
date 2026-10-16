@@ -61,6 +61,8 @@ Read one selected receipt:
 
 `download_attachment` requires exact `mailboxId`, `emailId`, and `attachmentId`. The MCP bridge rejects binary responses over 1 MiB; report that limit instead of inventing another URL or transport.
 
+Context needs the same native clean/safe gate within the remaining body budget; when the live context schema cannot enforce it, read selected individual IDs instead. Scan-omitted or truncated material stays unverified and cannot establish settlement. Every read remains bound to the selected workspace/mailbox.
+
 ## Follow-up draft or send
 
 Use `save_draft` with the content string in `body.body`. For an approved `reply_to_email` or `send_email`, use explicit recipients, required `body.from`, and `body.text` and/or `body.html`. MCP does not infer Reply All. A saved draft is not delivery authorization.
